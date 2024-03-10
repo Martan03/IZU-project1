@@ -25,18 +25,18 @@ impl UCS {
             return Err("End cannot be Wall".to_owned());
         }
 
-        let open = vec![Node::new(start.clone(), 0, vec![])];
+        let open = vec![Node::new(start, 0, vec![])];
         Ok(Self {
             trans_map,
             end,
             open,
-            closed: Vec::new(),
+            closed: vec![],
         })
     }
 
     /// Finds the path with lowest value
     pub fn search(&mut self) -> Result<Node, String> {
-        let mut iter = 0_usize;
+        let mut iter = 0;
         while !self.open.is_empty() {
             self.print(iter);
             let item = self.open.remove(0);
@@ -52,6 +52,7 @@ impl UCS {
     }
 
     fn expand(&mut self, node: &Node) {
+        self.closed.push(node.clone());
         let pos = node.pos();
 
         self._expand(pos.x.saturating_sub(1), pos.y.saturating_sub(1), node);
@@ -64,20 +65,18 @@ impl UCS {
         self._expand(pos.x.saturating_sub(1), pos.y + 1, node);
         self._expand(pos.x, pos.y + 1, node);
         self._expand(pos.x + 1, pos.y + 1, node);
-
-        self.closed.push(node.clone());
     }
 
     /// Helper function for node expanding
     fn _expand(&mut self, x: usize, y: usize, node: &Node) {
         let pos = Pos::new(x, y);
         let node_type = self.trans_map.get(&pos);
-        self.add(node_type.clone(), pos.clone(), node);
+        self.add(node_type.clone(), pos, node);
     }
 
     /// Adds node to the open queue
     fn add(&mut self, node_type: NodeType, pos: Pos, cur: &Node) {
-        if self.closed.iter().any(|n| *n.pos() == pos) {
+        if self.closed.iter().any(|n| n.pos() == &pos) {
             return;
         }
 
@@ -87,8 +86,22 @@ impl UCS {
 
         let mut path = cur.path().clone();
         path.push(cur.pos().clone());
+        let exist_id = self.open.iter().position(|n| n.pos() == &pos);
         let node = Node::new(pos, value + cur.value(), path);
 
+        match exist_id {
+            Some(id) => {
+                if self.open[id].value() > node.value() {
+                    self.open.remove(id);
+                    self._add(node);
+                }
+            }
+            None => self._add(node),
+        }
+    }
+
+    /// Helper function for adding item
+    fn _add(&mut self, node: Node) {
         let index = self
             .open
             .iter()
