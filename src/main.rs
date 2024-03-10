@@ -1,17 +1,16 @@
 use node::Pos;
 use trans_map::TransMap;
+use ucs::UCS;
 
 mod node;
 mod trans_map;
+mod ucs;
 
-fn main() -> Result<(), std::io::Error> {
-    let trans_map = TransMap::load("trans_map.txt")?;
-
-    let item = trans_map.get(Pos::new(7, 3));
-    match item {
-        node::NodeType::Node(value) => println!("{}", value),
-        node::NodeType::Wall => println!("Wall duh"),
-    }
+fn main() -> Result<(), String> {
+    let trans_map = TransMap::load("trans_map.txt")
+        .map_err(|_| "reading input".to_owned())?;
+    let mut ucs = UCS::new(trans_map, Pos::new(3, 6), Pos::new(6, 3))?;
+    _ = ucs.search()?;
 
     Ok(())
 }

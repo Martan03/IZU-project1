@@ -23,7 +23,7 @@ impl TransMap {
     }
 
     /// Gets item on given position from board
-    pub fn get(&self, pos: Pos) -> &NodeType {
+    pub fn get(&self, pos: &Pos) -> &NodeType {
         self.board
             .get(pos.y)
             .and_then(|row| row.get(pos.x))
