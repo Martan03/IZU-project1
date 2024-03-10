@@ -59,15 +59,10 @@ impl Node {
 
 impl Display for Node {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}, {}",
-            self.path()
-                .iter()
-                .map(|pos| format!("{}", pos))
-                .collect::<Vec<String>>()
-                .join(", "),
-            self.pos()
-        )
+        if let Some(parent) = self.path.last() {
+            write!(f, "({}, {}, {})", self.pos, self.value, parent)
+        } else {
+            write!(f, "({}, {}, null)", self.pos, self.value)
+        }
     }
 }
