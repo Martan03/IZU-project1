@@ -111,7 +111,7 @@ impl UCS {
     }
 
     fn print(&self, iter: usize) {
-        println!("Iteration {iter}:");
+        println!("{iter}. iterace");
         println!(
             "Open:\n{}",
             self.open

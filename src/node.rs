@@ -55,6 +55,19 @@ impl Node {
     pub fn path(&self) -> &Vec<Pos> {
         &self.path
     }
+
+    /// Prints the whole path of the [`Node`]
+    pub fn print_res(&self) {
+        println!(
+            "{}, {}",
+            self.path
+                .iter()
+                .map(|p| p.to_string())
+                .collect::<Vec<String>>()
+                .join(", "),
+            self.pos
+        )
+    }
 }
 
 impl Display for Node {

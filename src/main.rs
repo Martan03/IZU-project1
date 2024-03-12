@@ -10,7 +10,8 @@ fn main() -> Result<(), String> {
     let trans_map = TransMap::load("trans_map.txt")
         .map_err(|_| "reading input".to_owned())?;
     let mut ucs = UCS::new(trans_map, Pos::new(3, 6), Pos::new(6, 3))?;
-    _ = ucs.search()?;
+    let res = ucs.search()?;
+    res.print_res();
 
     Ok(())
 }
